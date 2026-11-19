@@ -1,13 +1,53 @@
 
 > destructuring-guide@0.0.0 depth
-> node js/depth.mjs
+> node js/depth.mjs && tsx ts/depth.tsx
 
-B2 string: Ç ilekeş
-B2 Set: Siyah ["Uyan","Yine"]
-B2 Map: Siyah 10
-B2 generator: started
-B2 generator: closed
-B2 generator first: Siyah
-B2 defaults: 35 25 null 1
-B2 initialization: ReferenceError: Cannot access 'later' before initialization
-B2 assignment targets: {"current":"Siyah","next":"Uyan"}
+D1 string: Ç ilekeş
+D1 Set: Siyah ["Uyan","Yine"]
+D1 Map: Siyah 10
+D2 one iterator
+D2 one next: 0 value
+D2 one return
+D2 one result: Siyah
+D2 skip iterator
+D2 skip next: 0 value
+D2 skip next: 1 value
+D2 skip return
+D2 skip result: Uyan
+D2 rest iterator
+D2 rest next: 0 value
+D2 rest next: 1 value
+D2 rest next: 2 value
+D2 rest next: 3 done
+D2 rest result: Siyah ["Uyan","Yine"]
+D2 empty iterator
+D2 empty return
+D2 object property: undefined
+D3 short requested: Siyah
+D3 short closed
+D3 short result: Siyah
+D3 full requested: Siyah
+D3 full requested: Uyan
+D3 full requested: Yine
+D3 full closed
+D3 full result: Siyah ["Uyan","Yine"]
+D4 defaults: 35 25 null 0 1
+D4 later binding: ReferenceError: Cannot access 'later' before initialization
+D4 evaluation order: ["choose key","read volume","default","read label"]
+D4 selected: 35 {"label":"Hardrock"}
+D5 inherited lookup: Hardrock
+D5 string keys: ["title","rating"]
+D5 symbol keys: ["source"]
+D5 hidden copied: false
+D5 JSON: {"title":"Siyah","rating":10}
+D6 for-in: S i
+D6 for-in: U y
+D6 for-in: Y i
+D6 for-of: Siyah 10
+D6 for-of: Uyan 7
+D6 for-of: Yine 9
+D6 assignment targets: {"title":"Siyah","rating":10}
+D6 catch: No song selected
+D7 First/Rest: Siyah ["Uyan","Yine"]
+D7 Parameters/ValueOf: Siyah 10
+D7 generic component: <ul><li>Siyah: 10</li><li>Uyan: 7</li><li>Yine: 9</li></ul>

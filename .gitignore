@@ -3,3 +3,11 @@ dist/
 .DS_Store
 *.log
 _compiler_probe.tsx
+_bonus_probe.tsx
+latex/*.aux
+latex/*.out
+latex/*.toc
+latex/*.xdv
+latex/*.synctex.gz
+latex/*.fls
+latex/*.fdb_latexmk

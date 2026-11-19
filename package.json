@@ -8,7 +8,7 @@
     "ts": "tsx ts/arrays.ts && tsx ts/objects.ts && tsx ts/params.ts && tsx ts/types.ts && tsx ts/props.tsx",
     "check": "tsc --noEmit",
     "all": "npm run js && npm run ts",
-    "depth": "node js/depth.mjs"
+    "depth": "node js/depth.mjs && tsx ts/depth.tsx"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

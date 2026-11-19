@@ -7,7 +7,7 @@ Student number: 2024501012
 
 This guide explores JavaScript and TypeScript destructuring through my Hardrock playlist. The examples cover positional values, named properties, defaults, rest, parameter patterns and React props and children. The personal log records my reported predictions, experiments and actual terminal results.
 
-Bonuses claimed: none yet. An optional Bonus 2: Depth study section is included. Claim it only after performing and explaining the experiments. No LaTeX/PDF, real-project study or remote Git history is claimed.
+Bonuses claimed: Bonus 2: Depth. Bonus 1: LaTeX is being prepared. Bonus 4: Git repository is in progress until the multi-day history is complete. Bonus 3: Real code is deferred.
 
 ## My data and the example settings
 
@@ -32,7 +32,7 @@ npm run all > output.txt
 
 Verification environment: Node.js v26.13.0, TypeScript 5.8.3, React/react-dom 19.3.1 and tsx 4.23.15. npm run all and npm run check completed successfully. The recorded output.txt contains real output from npm run all. Regenerate it after changes to the final source. A successful tsx execution does not replace tsc type checking.
 
-The starter strict, noUncheckedIndexedAccess and react-jsx settings are preserved. There is no explicit any or @ts-ignore in the source. The sole deliberate suppression is the T5 @ts-expect-error. The original all/js/ts/check scripts are preserved; a separate npm run depth command runs the optional extra file.
+The starter strict, noUncheckedIndexedAccess and react-jsx settings are preserved. There is no explicit any or @ts-ignore in the source. The sole deliberate suppression is the T5 @ts-expect-error. The original all/js/ts/check scripts are preserved; npm run depth runs the additional JavaScript and TypeScript investigations.
 
 ## What destructuring does
 
@@ -1009,77 +1009,326 @@ The explicit probe command should fail. The generated _compiler_probe.tsx must t
 
 ## Bonus 2: Depth
 
-This is an optional worked study section, not a claimed bonus yet. Its source is js/depth.mjs. Run:
+The investigations below use the Hardrock data to examine iterable access, evaluation order, copying boundaries, unusual binding locations and type-level extraction. Each runtime result comes from a real run of the included files. No execution-time benchmark or general performance claim is inferred from these small experiments.
+
+Sources: js/depth.mjs and ts/depth.tsx. Run both with:
 
 ```sh
 npm run depth
 ```
 
+The full captured output is depth-output.txt. The TypeScript part is included in the ordinary strict npm run check. The deliberate negative cases are kept separately as text.
+
+### D1: Strings, Set and Map are iterable values
+
 ```js
-// Bonus 2: Depth — optional experiments to reproduce and explain.
 const [firstLetter, ...remainingLetters] = 'Çilekeş'
-console.log('B2 string:', firstLetter, remainingLetters.join(''))
+console.log('D1 string:', firstLetter, remainingLetters.join(''))
 const [firstUnique, ...remainingUnique] = new Set(['Siyah', 'Uyan', 'Siyah', 'Yine'])
-console.log('B2 Set:', firstUnique, JSON.stringify(remainingUnique))
+console.log('D1 Set:', firstUnique, JSON.stringify(remainingUnique))
 const [[title, rating]] = new Map([['Siyah', 10]])
-console.log('B2 Map:', title, rating)
-function* playQueue() {
-  try {
-    console.log('B2 generator: started')
-    yield 'Siyah'
-    console.log('B2 generator: second requested')
-    yield 'Uyan'
-  } finally {
-    console.log('B2 generator: closed')
+console.log('D1 Map:', title, rating)
+```
+
+**Real output:**
+
+```text
+D1 string: Ç ilekeş
+D1 Set: Siyah ["Uyan","Yine"]
+D1 Map: Siyah 10
+```
+
+**What the experiment shows:** The string yields Ç followed by the remaining characters. Set discards the second Siyah while keeping insertion order. Map yields an entry array, so the nested pattern gets its key and value. These examples establish that array patterns accept iterable values, not only Array instances. The following trace experiment tests the protocol directly.
+
+### D2: Observe iterator, next and return calls
+
+```js
+function tracedQueue(label) {
+  const titles = ['Siyah', 'Uyan', 'Yine']
+  return {
+    [Symbol.iterator]() {
+      let index = 0
+      console.log(`${label} iterator`)
+      return {
+        next() {
+          const done = index >= titles.length
+          console.log(`${label} next:`, index, done ? 'done' : 'value')
+          return { value: titles[index++], done }
+        },
+        return() {
+          console.log(`${label} return`)
+          return { done: true }
+        },
+      }
+    },
   }
 }
-const [firstSong] = playQueue()
-console.log('B2 generator first:', firstSong)
+const [first] = tracedQueue('D2 one')
+console.log('D2 one result:', first)
+const [, second] = tracedQueue('D2 skip')
+console.log('D2 skip result:', second)
+const [head, ...tail] = tracedQueue('D2 rest')
+console.log('D2 rest result:', head, JSON.stringify(tail))
+const [] = tracedQueue('D2 empty')
+const { 0: numericProperty } = tracedQueue('D2 object')
+console.log('D2 object property:', numericProperty)
+```
+
+**Real output:**
+
+```text
+D2 one iterator
+D2 one next: 0 value
+D2 one return
+D2 one result: Siyah
+D2 skip iterator
+D2 skip next: 0 value
+D2 skip next: 1 value
+D2 skip return
+D2 skip result: Uyan
+D2 rest iterator
+D2 rest next: 0 value
+D2 rest next: 1 value
+D2 rest next: 2 value
+D2 rest next: 3 done
+D2 rest result: Siyah ["Uyan","Yine"]
+D2 empty iterator
+D2 empty return
+D2 object property: undefined
+```
+
+**What the experiment shows:** Taking one song calls the iterator method once, next once, then return to close the unfinished iterator. Skipping a position still calls next, so the second-song example consumes two values before closing. Rest requests all three values and one final done result; it does not call return after ordinary exhaustion. The empty [] pattern still acquires and closes an iterator without calling next. By contrast, the object pattern asks for property 0 and never invokes the iterator method; this object has no such property, so the value is undefined. These are different access mechanisms, not interchangeable indexing syntax. The [GetIterator and IteratorClose algorithms](https://tc39.es/ecma262/multipage/abstract-operations.html#sec-getiterator) explain the traced operations.
+
+### D3: Compare early closure with complete generator consumption
+
+```js
+function* playQueue(label) {
+  try {
+    for (const title of ['Siyah', 'Uyan', 'Yine']) {
+      console.log(`${label} requested:`, title)
+      yield title
+    }
+  } finally {
+    console.log(`${label} closed`)
+  }
+}
+const [first] = playQueue('D3 short')
+console.log('D3 short result:', first)
+const [head, ...rest] = playQueue('D3 full')
+console.log('D3 full result:', head, JSON.stringify(rest))
+```
+
+**Real output:**
+
+```text
+D3 short requested: Siyah
+D3 short closed
+D3 short result: Siyah
+D3 full requested: Siyah
+D3 full requested: Uyan
+D3 full requested: Yine
+D3 full closed
+D3 full result: Siyah ["Uyan","Yine"]
+```
+
+**What the experiment shows:** The short pattern requests only Siyah, and the generator finally block runs before the result is printed. Adding rest requests Siyah, Uyan and Yine before finally runs. In the short case, closing the unfinished generator triggers finally; in the full case, finally also runs when the generator reaches normal completion. A finally log alone therefore does not prove that return was called. This is why the explicit protocol trace in D2 is useful. Rest also means full consumption: collecting an infinite queue would never finish.
+
+### D4: Lazy defaults, dependencies and getter order
+
+```js
 let calls = 0
 function defaultVolume() {
   calls += 1
   return 35
 }
-const [volume = defaultVolume(), quietVolume = volume - 10, note = defaultVolume()] = [undefined, undefined, null]
-console.log('B2 defaults:', volume, quietVolume, note, calls)
+const [volume = defaultVolume(), quiet = volume - 10,
+  note = defaultVolume(), muted = defaultVolume()] = [undefined, undefined, null, 0]
+console.log('D4 defaults:', volume, quiet, note, muted, calls)
 try {
   const [first = later, later = 'Yine'] = []
   console.log(first, later)
 } catch (error) {
-  console.log('B2 initialization:', `${error.name}: ${error.message}`)
+  console.log('D4 later binding:', `${error.name}: ${error.message}`)
 }
-const playback = { current: '', next: '' }
-;[playback.current, playback.next] = ['Siyah', 'Uyan']
-console.log('B2 assignment targets:', JSON.stringify(playback))
+const events = []
+const settings = {
+  get volume() { events.push('read volume'); return undefined },
+  get label() { events.push('read label'); return 'Hardrock' },
+}
+function chooseKey() { events.push('choose key'); return 'volume' }
+function fallback() { events.push('default'); return 35 }
+const { [chooseKey()]: selectedVolume = fallback(), ...rest } = settings
+console.log('D4 evaluation order:', JSON.stringify(events))
+console.log('D4 selected:', selectedVolume, JSON.stringify(rest))
 ```
 
-**Real output** (also in depth-output.txt):
+**Real output:**
 
 ```text
-B2 string: Ç ilekeş
-B2 Set: Siyah ["Uyan","Yine"]
-B2 Map: Siyah 10
-B2 generator: started
-B2 generator: closed
-B2 generator first: Siyah
-B2 defaults: 35 25 null 1
-B2 initialization: ReferenceError: Cannot access 'later' before initialization
-B2 assignment targets: {"current":"Siyah","next":"Uyan"}
+D4 defaults: 35 25 null 0 1
+D4 later binding: ReferenceError: Cannot access 'later' before initialization
+D4 evaluation order: ["choose key","read volume","default","read label"]
+D4 selected: 35 {"label":"Hardrock"}
 ```
 
-### Iterable values and early generator closure
+**What the experiment shows:** The four bindings print 35, 25, null and 0 with exactly one defaultVolume call. An earlier binding is available to the next default, while null and zero prevent their initializers from running. Reading a later binding before initialization throws the recorded ReferenceError. The second experiment records choose key, read volume, default and read label in that order. The selected getter is read before its default is chosen; rest then reads the other enumerable field. A default expression can have observable side effects, so moving it elsewhere or repeatedly reading a getter is not always an equivalent refactoring. The [binding initialization algorithms](https://tc39.es/ecma262/multipage/syntax-directed-operations.html#sec-runtime-semantics-iteratorbindinginitialization) distinguish extraction from conditional default evaluation.
 
-The string pattern consumes the string iterator; Set removes duplicate Siyah entries and retains insertion order. Map yields entry arrays, so a nested pattern extracts a title and its rating. The generator prints started and closed without requesting its second song: taking one item closes the unfinished iterator, running finally. Change `[firstSong]` to `[firstSong, ...remaining]` to investigate full consumption of this finite generator. Do not collect an infinite iterator with rest.
+### D5: Object rest, inheritance, non-enumerable fields and symbols
 
-### Default evaluation and initialization order
+```js
+const sourceTag = Symbol('source')
+const song = Object.create({ playlistName: 'Hardrock' })
+song.title = 'Siyah'
+song.rating = 10
+song[sourceTag] = 'student list'
+Object.defineProperty(song, 'internalNote', { value: 'local only', enumerable: false })
+const { playlistName, ...publicTrack } = song
+console.log('D5 inherited lookup:', playlistName)
+console.log('D5 string keys:', JSON.stringify(Object.keys(publicTrack)))
+console.log('D5 symbol keys:', JSON.stringify(Object.getOwnPropertySymbols(publicTrack).map(key => key.description)))
+console.log('D5 hidden copied:', Object.hasOwn(publicTrack, 'internalNote'))
+console.log('D5 JSON:', JSON.stringify(publicTrack))
+```
 
-Only the first missing value calls defaultVolume. quietVolume can read the earlier initialized volume; null prevents the third initializer from running. The counter is therefore 1. The separate later-binding experiment throws a ReferenceError because later is still uninitialized when the first default tries to read it. Reorder dependencies or calculate them outside the pattern. These behaviors are described by the [ECMAScript binding algorithms](https://tc39.es/ecma262/multipage/ecmascript-language-statements-and-declarations.html#sec-destructuring-binding-patterns).
+**Real output:**
 
-### Existing assignment targets
+```text
+D5 inherited lookup: Hardrock
+D5 string keys: ["title","rating"]
+D5 symbol keys: ["source"]
+D5 hidden copied: false
+D5 JSON: {"title":"Siyah","rating":10}
+```
 
-Assignment destructuring can target playback.current and playback.next. It need not declare new variables. A declaration pattern instead introduces bindings. The printed object shows the existing properties receiving the two queue values.
+**What the experiment shows:** A named property lookup can find playlistName on the prototype. Rest does not copy that inherited field or the non-enumerable internalNote. It does copy the own enumerable symbol property. Object.keys shows only title and rating, but getOwnPropertySymbols reveals source. JSON output also omits the symbol key, so JSON.stringify alone is insufficient evidence of everything rest copied. The experiment explicitly checks each kind of property rather than assuming that the JSON string describes the whole object.
 
-Before claiming this bonus, make a meaningful variation, record its actual output and explain why it changed. Add Bonus 2: Depth to the bonus list only after that work.
+### D6: A loop can destructure the wrong kind of value
+
+```js
+const ratings = { Siyah: 10, Uyan: 7, Yine: 9 }
+for (const [first, second] in ratings) {
+  console.log('D6 for-in:', first, second)
+}
+for (const [title, rating] of Object.entries(ratings)) {
+  console.log('D6 for-of:', title, rating)
+}
+const current = { title: '', rating: 0 }
+;[current.title, current.rating] = ['Siyah', 10]
+console.log('D6 assignment targets:', JSON.stringify(current))
+try {
+  throw new Error('No song selected')
+} catch ({ message }) {
+  console.log('D6 catch:', message)
+}
+```
+
+**Real output:**
+
+```text
+D6 for-in: S i
+D6 for-in: U y
+D6 for-in: Y i
+D6 for-of: Siyah 10
+D6 for-of: Uyan 7
+D6 for-of: Yine 9
+D6 assignment targets: {"title":"Siyah","rating":10}
+D6 catch: No song selected
+```
+
+**What the experiment shows:** The JavaScript for-in loop receives property-name strings. Its array pattern consumes the first two characters of each title, producing S/i, U/y and Y/i. The for-of loop over Object.entries receives actual title/rating pairs. This is a concrete case where legal JavaScript syntax produces the wrong meaning. TypeScript rejects the for-in pattern outright, as the negative experiment below shows. The final two examples assign into existing object properties and select message in a catch binding. Assignment patterns can update property targets; declarations introduce bindings. A catch pattern still assumes the thrown value supports that shape, so arbitrary thrown null/undefined values need validation instead.
+
+### D7: Extract tuple/object types and connect them to generic React props
+
+```tsx
+import type { ReactNode } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+// These helpers extract types from tuples, not values from runtime arrays.
+type First<T extends readonly unknown[]> =
+  T extends readonly [infer Head, ...unknown[]] ? Head : never
+type Rest<T extends readonly unknown[]> =
+  T extends readonly [unknown, ...infer Tail] ? Tail : []
+type ValueOf<T> = T extends { value: infer Value } ? Value : never
+
+const queue = ['Siyah', 'Uyan', 'Yine'] as const
+const first: First<typeof queue> = queue[0]
+const rest: Rest<typeof queue> = ['Uyan', 'Yine']
+console.log('D7 First/Rest:', first, JSON.stringify(rest))
+
+type Song = { title: string; rating: number }
+function makeSong(title: string, rating: number): Song {
+  return { title, rating }
+}
+const args: Parameters<typeof makeSong> = ['Siyah', 10]
+const { title, rating } = makeSong(...args)
+const selectedRating: ValueOf<{ value: number }> = rating
+console.log('D7 Parameters/ValueOf:', title, selectedRating)
+
+function SongList<T>({ items, children }: {
+  items: readonly T[]
+  children: (item: T) => ReactNode
+}) {
+  return <ul>{items.map(item => children(item))}</ul>
+}
+const songs: Song[] = [
+  { title: 'Siyah', rating: 10 },
+  { title: 'Uyan', rating: 7 },
+  { title: 'Yine', rating: 9 },
+]
+console.log('D7 generic component:', renderToStaticMarkup(
+  <SongList items={songs}>{song => <li key={song.title}>{song.title}: {song.rating}</li>}</SongList>
+))
+```
+
+**Real output:**
+
+```text
+D7 First/Rest: Siyah ["Uyan","Yine"]
+D7 Parameters/ValueOf: Siyah 10
+D7 generic component: <ul><li>Siyah: 10</li><li>Uyan: 7</li><li>Yine: 9</li></ul>
+```
+
+First and Rest operate on tuple types at compile time; they do not pull values out of a runtime array. First<typeof queue> is the literal type "Siyah", and Rest<typeof queue> is the tuple ["Uyan", "Yine"]. This particular Rest helper infers a mutable tail, even though the input tuple is readonly. First<string[]> becomes never because an ordinary array is not guaranteed to have a head. A separate runtime guard/default is the appropriate way to handle a possibly empty array.
+
+ValueOf uses infer to extract the type of an object's value field. Parameters<typeof makeSong> produces the argument tuple [title: string, rating: number], which checks the spread call. These are type-level structural operations; their annotations disappear at runtime. [TypeScript conditional inference](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#inferring-within-conditional-types) and [Parameters](https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype) describe those type tools.
+
+SongList infers T from its items. The function-valued children prop therefore receives a Song, and the component calls it once per item to produce the list. The title/rating fields are checked without an explicit any, a cast or an additional suppression. This connects generic typing to the function-children contract from P3, rather than confusing a type helper with runtime destructuring.
+
+**Real negative compiler results:**
+
+```text
+_bonus_probe.tsx(6,7): error TS2322: Type '"Siyah"' is not assignable to type 'never'.
+_bonus_probe.tsx(8,56): error TS2322: Type 'string' is not assignable to type 'number'.
+_bonus_probe.tsx(16,22): error TS2339: Property 'duration' does not exist on type '{ title: string; rating: number; }'.
+_bonus_probe.tsx(18,12): error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.
+```
+
+The first error verifies that an arbitrary string cannot inhabit the never result of First<string[]>. The second rejects a string rating in Parameters. The third rejects a field absent from the inferred item type. The fourth is the TypeScript restriction on the JavaScript for-in experiment. The sources are saved in bonus-compiler-probe.txt. To reproduce without leaving errors in the project:
+
+```sh
+cp bonus-compiler-probe.txt _bonus_probe.tsx
+node node_modules/typescript/bin/tsc --noEmit --strict --noUncheckedIndexedAccess --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --jsx react-jsx _bonus_probe.tsx --pretty false > bonus-compiler-errors.txt
+rm _bonus_probe.tsx
+npm run check
+```
+
+The explicit negative command should fail, while the final ordinary project check should pass. The original T5 directive remains the project's only suppression.
+
+## Bonus 4: Git repository
+
+https://github.com/mertsengel125-coder/assignment4-destructuring-field-guide
+
+The repository is public and provides read access to the source. node_modules is excluded by .gitignore. Reproduce the project with:
+
+```sh
+git clone https://github.com/mertsengel125-coder/assignment4-destructuring-field-guide.git
+cd assignment4-destructuring-field-guide
+npm install
+npm run all
+npm run check
+```
+
+The real Git history began on 19 November 2026. The required multi-day history is still in progress: at least five meaningful commits must span several days before this bonus is fully complete. Existing commits are not backdated. GIT_WORK_PLAN.md records the remaining work before the 22 November 2026, 23:59 Europe/Istanbul deadline. Use git log to inspect the actual current history rather than treating a plan as completed work.
 
 ## Submission checks
 
@@ -1089,7 +1338,7 @@ Before claiming this bonus, make a meaningful variation, record its actual outpu
 - Keep the correct name/student number at the top of each source file.
 - Keep strict settings and only the single T5 suppression.
 - Zip one assignment4 folder without node_modules or .git. Upload to Moodle by its announced deadline.
-- Bonus 1 needs the full LaTeX source and compiled PDF; Bonus 3 needs at least five actual file/line cases from the required real-code sources, including the missing Assignment 3 sample; Bonus 4 needs a real accessible repository and genuine multi-day history. None is claimed here.
+- Bonus 2 is documented above. Bonus 1 is in preparation, Bonus 3 is deferred, and Bonus 4 still requires its real multi-day history. Update the bonus status only after those requirements are met.
 
 ## My own log
 

@@ -1,0 +1,4 @@
+_bonus_probe.tsx(6,7): error TS2322: Type '"Siyah"' is not assignable to type 'never'.
+_bonus_probe.tsx(8,56): error TS2322: Type 'string' is not assignable to type 'number'.
+_bonus_probe.tsx(16,22): error TS2339: Property 'duration' does not exist on type '{ title: string; rating: number; }'.
+_bonus_probe.tsx(18,12): error TS2491: The left-hand side of a 'for...in' statement cannot be a destructuring pattern.

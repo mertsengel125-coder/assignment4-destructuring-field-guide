@@ -1,0 +1,20 @@
+// Arif Mert Şengel — 2024501012
+// Separate negative type experiments for Bonus 2.
+import type { ReactNode } from 'react'
+type First<T extends readonly unknown[]> =
+  T extends readonly [infer Head, ...unknown[]] ? Head : never
+const badHead: First<string[]> = 'Siyah'
+function makeSong(title: string, rating: number) { return { title, rating } }
+const badArgs: Parameters<typeof makeSong> = ['Siyah', '10']
+function SongList<T>({ items, children }: {
+  items: readonly T[]
+  children: (item: T) => ReactNode
+}) {
+  return <ul>{items.map(item => children(item))}</ul>
+}
+const wrongChild = <SongList items={[{ title: 'Siyah', rating: 10 }]}>
+  {song => <li>{song.duration}</li>}
+</SongList>
+for (const [first, second] in { Siyah: 10 }) {
+  console.log(first, second)
+}
