@@ -1,0 +1,73 @@
+% Arif Mert Şengel - 2024501012
+\usepackage{fontspec}
+% Use the TeX-bundled Latin Modern defaults rather than OS-installed fonts.
+\usepackage{xcolor,listings,booktabs,longtable,array,fancyhdr,lastpage,titlesec,xurl,needspace}
+\definecolor{guideink}{HTML}{18334D}
+\definecolor{guideaccent}{HTML}{245D85}
+\definecolor{guidepaper}{HTML}{F5F7FA}
+\definecolor{guideborder}{HTML}{CBD4DF}
+\definecolor{guidecomment}{HTML}{536B55}
+\definecolor{guidestring}{HTML}{8C4D31}
+\lstdefinelanguage{JavaScript}{
+  keywords={const,let,var,function,return,for,of,in,if,else,try,catch,finally,throw,new,class,extends,import,from,export,default,yield,true,false,null,undefined},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`
+}
+\lstdefinelanguage{TypeScript}[]{JavaScript}{morekeywords={type,infer,never,unknown,readonly,keyof,typeof,number,string,boolean,as}}
+\lstdefinelanguage{JSX}[]{JavaScript}{}
+\lstdefinelanguage{TSX}[]{TypeScript}{}
+\lstdefinelanguage{JavaScriptReact}[]{JavaScript}{}
+\lstdefinelanguage{TypeScriptReact}[]{TypeScript}{}
+\lstdefinelanguage{js}[]{JavaScript}{}
+\lstdefinelanguage{jsx}[]{JavaScript}{}
+\lstdefinelanguage{ts}[]{TypeScript}{}
+\lstdefinelanguage{tsx}[]{TypeScript}{}
+\lstdefinelanguage{text}{}
+\lstdefinelanguage{Text}{}
+\lstdefinelanguage{bash}{morekeywords={npm,node,npx,git,cd,cp,rm,bash,python3,tectonic},sensitive=true,morecomment=[l]{\#},morestring=[b]",morestring=[b]'}
+\lstdefinelanguage{sh}[]{bash}{}
+\lstset{
+  basicstyle=\ttfamily\fontsize{8.2pt}{10.3pt}\selectfont,
+  keywordstyle=\color{guideaccent},
+  commentstyle=\color{guidecomment},
+  stringstyle=\color{guidestring},
+  backgroundcolor=\color{guidepaper},
+  frame=single,rulecolor=\color{guideborder},framerule=0.3pt,framesep=5pt,
+  breaklines=true,breakatwhitespace=false,columns=fullflexible,
+  keepspaces=true,showstringspaces=false,upquote=true,
+  xleftmargin=0.7em,xrightmargin=0.7em,
+  aboveskip=0.7em,belowskip=0.7em,
+  literate={Ç}{{\c{C}}}1 {ç}{{\c{c}}}1 {Ş}{{\c{S}}}1 {ş}{{\c{s}}}1
+           {Ğ}{{\u{G}}}1 {ğ}{{\u{g}}}1 {İ}{{\.I}}1 {ı}{{\i}}1
+           {Ö}{{\"O}}1 {ö}{{\"o}}1 {Ü}{{\"U}}1 {ü}{{\"u}}1
+}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt plus 1pt}
+\setlength{\emergencystretch}{3em}
+\setlength{\headheight}{14pt}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{1}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\sffamily\color{guideink}Hardrock field guide}
+\fancyhead[R]{\small\sffamily MIS 233}
+\fancyfoot[L]{\small Arif Mert Şengel}
+\fancyfoot[R]{\small \thepage\ / \pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0pt}
+\titleformat{\section}{\normalfont\Large\bfseries\color{guideink}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{guideink}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.2em}{0.6em}
+\titlespacing*{\subsection}{0pt}{1em}{0.4em}
+\pretocmd{\subsection}{\Needspace{15\baselineskip}}{}{}
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}}
+\let\guidetoc\tableofcontents
+\renewcommand{\tableofcontents}{\guidetoc\clearpage}
+\let\guidemaketitle\maketitle
+\renewcommand{\maketitle}{\hypersetup{pageanchor=false}\guidemaketitle\hypersetup{pageanchor=true}}
+\urlstyle{same}
+\Urlmuskip=0mu plus 1mu

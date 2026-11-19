@@ -7,7 +7,7 @@ Student number: 2024501012
 
 This guide explores JavaScript and TypeScript destructuring through my Hardrock playlist. The examples cover positional values, named properties, defaults, rest, parameter patterns and React props and children. The personal log records my reported predictions, experiments and actual terminal results.
 
-Bonuses claimed: Bonus 2: Depth. Bonus 1: LaTeX is being prepared. Bonus 4: Git repository is in progress until the multi-day history is complete. Bonus 3: Real code is deferred.
+Bonuses claimed: Bonus 1: LaTeX; Bonus 2: Depth. Bonus 4: Git repository is in progress until the multi-day history is complete. Bonus 3: Real code is deferred.
 
 ## My data and the example settings
 
@@ -1007,6 +1007,25 @@ npm run check
 
 The explicit probe command should fail. The generated _compiler_probe.tsx must then be removed; the normal project check must pass. Source-file line numbers and wording can vary with compiler versions, so record what your own run actually prints.
 
+## Bonus 1: LaTeX
+
+The complete field guide is supplied as latex/main.tex and latex/main.pdf. It includes all twelve form entries, the five pitfalls, T1-T5, P1-P7, the comparison table, the depth investigations and the personal log. The title/name fields appear on the title page. The contents page links to sections, source/output blocks use listings, and the tables are actual longtable tables rather than screenshots.
+
+The source was generated from this README with Pandoc 3.14 and compiled with Tectonic 0.17.0. The conversion helpers are in scripts/. To regenerate the TeX source with Pandoc installed, then compile the PDF with Tectonic installed:
+
+```sh
+python3 scripts/make_latex.py
+bash scripts/build_pdf.sh
+```
+
+The compiler command executed by the build script is:
+
+```sh
+tectonic -X compile --keep-logs --outdir latex latex/main.tex
+```
+
+The build also accepts --pandoc /path/to/pandoc and the TECTONIC_BIN environment variable for a compiler outside PATH. The included main.tex is self-contained, so Pandoc is needed only when regenerating the source after editing README. Tectonic runs the required LaTeX passes and produces the PDF. No shell-escape or external syntax-highlighting process is required. The PDF was checked for clipped text, missing characters and overfull boxes; build details are recorded in latex/build-report.txt.
+
 ## Bonus 2: Depth
 
 The investigations below use the Hardrock data to examine iterable access, evaluation order, copying boundaries, unusual binding locations and type-level extraction. Each runtime result comes from a real run of the included files. No execution-time benchmark or general performance claim is inferred from these small experiments.
@@ -1338,7 +1357,7 @@ The real Git history began on 19 November 2026. The required multi-day history i
 - Keep the correct name/student number at the top of each source file.
 - Keep strict settings and only the single T5 suppression.
 - Zip one assignment4 folder without node_modules or .git. Upload to Moodle by its announced deadline.
-- Bonus 2 is documented above. Bonus 1 is in preparation, Bonus 3 is deferred, and Bonus 4 still requires its real multi-day history. Update the bonus status only after those requirements are met.
+- Bonuses 1 and 2 are documented above. Bonus 3 is deferred; Bonus 4 still requires its real multi-day history. Update the bonus status only after those requirements are met.
 
 ## My own log
 
