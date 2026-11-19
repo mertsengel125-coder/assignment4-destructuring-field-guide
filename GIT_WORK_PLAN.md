@@ -8,11 +8,14 @@ Deadline: 22 November 2026, 23:59 Europe/Istanbul.
 
 The repository/history started on 19 November. This plan does not claim future commits or earlier work dates.
 
-## 19 November
+## 19 November - completed
 
 - Record the required field guide and runnable examples.
 - Add and document the depth investigations.
 - Prepare the complete LaTeX guide, compile it and inspect its PDF.
+- Publish the code and the reviewed PDF to the public repository.
+- Clone the repository into a separate directory and verify install, all,
+  strict check, depth output and LaTeX compilation. Results are in VERIFICATION.md.
 
 ## 20 November - planned
 
