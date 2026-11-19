@@ -1,0 +1,92 @@
+// Arif Mert Şengel — 2024501012
+// Intentional failures for a separate compiler experiment, not final source files.
+import type { ReactNode, PropsWithChildren, ComponentProps } from 'react'
+// Form 1: a mixed ordinary array is not a typed tuple.
+{
+  function summary() { return [10, 'Siyah'] }
+  const [rating] = summary()
+  const score: number = rating
+}
+// Form 2 / T3: the array can be empty.
+{
+  const queue: string[] = []
+  const [first] = queue
+  first.toUpperCase()
+}
+// Form 3: incompatible variable types cannot be swapped.
+{
+  let title = 'Siyah'
+  let rating = 10
+  ;[title, rating] = [rating, title]
+}
+// Form 4: the default can introduce an incompatible type.
+{
+  const saved: number[] = []
+  const [volume = 'unknown'] = saved
+  const numericVolume: number = volume
+}
+// Form 5 / T5: the property name is misspelled.
+{
+  const song = { title: 'Siyah' }
+  const { titel } = song
+}
+// Form 6: the source name is not a new local variable.
+{
+  const { artist: artistName } = { artist: 'Çilekeş' }
+  console.log(artist)
+}
+// Form 7 / T4: an optional property can be undefined.
+{
+  const settings: { volume?: number } = {}
+  const { volume } = settings
+  const readyVolume: number = volume
+}
+// Form 8: selected fields are excluded from the rest type.
+{
+  const { rating, ...publicTrack } = { title: 'Siyah', rating: 10 }
+  console.log(publicTrack.rating)
+}
+// Form 9: the nested parent can be absent.
+{
+  const playlist: { listening?: { activity: string } } = {}
+  const { listening: { activity } } = playlist
+}
+// Form 10: a plain string is not constrained to known keys.
+{
+  const song = { title: 'Siyah', rating: 10 }
+  function readField(key: string) {
+    const { [key]: value } = song
+    return value
+  }
+}
+// Form 11: {} does not supply a required playlistName.
+{
+  function playback({ playlistName }: { playlistName: string } = {}) { return playlistName }
+}
+// Form 12: plain objects are not iterable entry collections.
+{
+  for (const [title, rating] of { Siyah: 10 }) { console.log(title, rating) }
+}
+// T1: this colon creates a numeric variable called string.
+{
+  const { rating: string } = { rating: 10 }
+  string.toUpperCase()
+}
+// T2: the literal tuple is readonly in the type system.
+{
+  const fixed = [10, 'Siyah'] as const
+  fixed.push(9)
+}
+// P7: the three different props contracts.
+function RatingBox({ children }: { children?: ReactNode }) { return <aside>{children}</aside> }
+function ListeningBox({ label, children }: PropsWithChildren<{ label: string }>) {
+  return <aside>{label}{children}</aside>
+}
+function QueueButton({ children, ...rest }: ComponentProps<'button'>) {
+  return <button {...rest}>{children}</button>
+}
+const badNode = <RatingBox>{() => 'Siyah'}</RatingBox>
+const badLabel = <ListeningBox>Hardrock</ListeningBox>
+const badLink = <QueueButton href="/playlist">Queue</QueueButton>
+const badDisabled = <QueueButton disabled="yes">Queue</QueueButton>
+function MissingChildren({ name, children }: { name: string }) { return <p>{name}{children}</p> }

@@ -1,0 +1,13 @@
+
+> destructuring-guide@0.0.0 depth
+> node js/depth.mjs
+
+B2 string: Ç ilekeş
+B2 Set: Siyah ["Uyan","Yine"]
+B2 Map: Siyah 10
+B2 generator: started
+B2 generator: closed
+B2 generator first: Siyah
+B2 defaults: 35 25 null 1
+B2 initialization: ReferenceError: Cannot access 'later' before initialization
+B2 assignment targets: {"current":"Siyah","next":"Uyan"}

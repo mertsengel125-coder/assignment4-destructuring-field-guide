@@ -1,0 +1,127 @@
+
+> destructuring-guide@0.0.0 all
+> npm run js && npm run ts
+
+
+> destructuring-guide@0.0.0 js
+> node js/arrays.mjs && node js/objects.mjs && node js/params.mjs && node js/pitfalls.mjs && tsx js/props.jsx
+
+F1: 777 8.666666666666666
+F2 next: Uyan
+F2 remaining: ["Yine"]
+F3 before: Siyah Yine
+F3 after: Yine Siyah
+F4: 35 false
+F5: Hardrock ders çalışırken
+F6: Siyah Çilekeş
+F7: No playlist note
+F8 rating: 10
+F8 public: {"title":"Siyah","artist":"Çilekeş","durationSeconds":285}
+F9: ders çalışırken Siyah
+F10 rating: 10
+F10 duration: 285
+F11 omitted: {"playlistName":"Hardrock","volume":35,"repeat":false}
+F11 supplied: {"playlistName":"Hardrock","volume":60,"repeat":false}
+F11 array parameter: 285
+F12 object: Siyah 10
+F12 object: Uyan 7
+F12 object: Yine 9
+F12 Map: Siyah Çilekeş
+F12 Map: Uyan Pickpocket
+F12 Map: Yine Kurban
+Pitfall 1 undefined: TypeError: Cannot destructure property 'title' of 'input' as it is undefined.
+Pitfall 1 null: TypeError: Cannot destructure property 'title' of 'input' as it is null.
+Pitfall 2 missing: 35
+Pitfall 2 undefined: 35
+Pitfall 2 null: null
+Pitfall 2 zero: 0
+Pitfall 3 invalid: SyntaxError: Unexpected token '='
+Pitfall 3 fixed: Siyah
+Pitfall 4 original rating: 7
+Pitfall 4 different outer object: true
+Pitfall 4 shared stats: true
+Pitfall 5 object: Çilekeş Siyah
+Pitfall 5 array: Siyah Çilekeş
+P1 A: <section><h2>Hardrock</h2><p>ders çalışırken</p></section>
+P1 B: <section><h2>Hardrock</h2><p>ders çalışırken</p></section>
+P2 nested: <section><h2>Hardrock</h2>Siyah</section>
+P2 attribute: <section><h2>Hardrock</h2>Siyah</section>
+P2 collision: <section><h2>Hardrock</h2>Siyah</section>
+P3 string: <div>Siyah</div>
+P3 number: <div>10</div>
+P3 element: <div><em>Çilekeş</em></div>
+P3 several: <div><b>Siyah</b><i>Uyan</i></div>
+P3 undefined: <div></div>
+P3 null: <div></div>
+P3 false: <div></div>
+P3 raw function: <div></div>
+P3 diagnostic: Functions are not valid as a React child. This may happen if you return renderTrackCount instead of <renderTrackCount /> from render. Or maybe you meant to call this function rather than return it.
+P3 called function: <div><strong>3 tracks</strong></div>
+P4 explicit last: <section id="study-list" class="music"><h2>Hardrock</h2>Siyah</section>
+P4 spread last: <section class="study" id="study-list"><h2>Hardrock</h2>Siyah</section>
+P5 named slots: <section><header><h3>Hardrock</h3></header><main><ol><li>Siyah</li><li>Uyan</li><li>Yine</li></ol></main><footer><small>3 tracks</small></footer></section>
+P5 children only: <section><header><h3>Hardrock</h3></header><main><ol><li>Siyah</li><li>Uyan</li><li>Yine</li></ol></main><footer><small>3 tracks</small></footer></section>
+P6 missing: <p>No listening note</p>
+P6 undefined: <p>No listening note</p>
+P6 null: <p></p>
+P6 empty string: <p></p>
+P7 ReactNode: <aside>10</aside>
+P7 PropsWithChildren: <aside><strong>Studying</strong>Hardrock</aside>
+P7 ComponentProps: <button type="button" disabled="" aria-label="Queue Siyah">Queue</button>
+
+> destructuring-guide@0.0.0 ts
+> tsx ts/arrays.ts && tsx ts/objects.ts && tsx ts/params.ts && tsx ts/types.ts && tsx ts/props.tsx
+
+F1: 777 8.666666666666666
+F2 next: Uyan
+F2 remaining: ["Yine"]
+F3 before: Siyah Yine
+F3 after: Yine Siyah
+F4: 35 false
+F5: Hardrock ders çalışırken
+F6: Siyah Çilekeş
+F7: No playlist note
+F8 rating: 10
+F8 public: {"title":"Siyah","artist":"Çilekeş","durationSeconds":285}
+F9: ders çalışırken Siyah
+F10 rating: 10
+F10 duration: 285
+F11 omitted: {"playlistName":"Hardrock","volume":35,"repeat":false}
+F11 supplied: {"playlistName":"Hardrock","volume":60,"repeat":false}
+F11 array parameter: 285
+F12 object: Siyah 10
+F12 object: Uyan 7
+F12 object: Yine 9
+F12 Map: Siyah Çilekeş
+F12 Map: Uyan Pickpocket
+F12 Map: Yine Kurban
+T1: 10 number 10
+T2: 10 Siyah 10 Siyah
+T3: undefined Siyah No song selected
+T4: undefined 35 null
+T5 wrong: undefined
+T5 fixed: Siyah
+P1 A: <section><h2>Hardrock</h2><p>ders çalışırken</p></section>
+P1 B: <section><h2>Hardrock</h2><p>ders çalışırken</p></section>
+P2 nested: <section><h2>Hardrock</h2>Siyah</section>
+P2 attribute: <section><h2>Hardrock</h2>Siyah</section>
+P2 collision: <section><h2>Hardrock</h2>Siyah</section>
+P3 string: <div>Siyah</div>
+P3 number: <div>10</div>
+P3 element: <div><em>Çilekeş</em></div>
+P3 several: <div><b>Siyah</b><i>Uyan</i></div>
+P3 undefined: <div></div>
+P3 null: <div></div>
+P3 false: <div></div>
+P3 called function: <div><strong>3 tracks</strong></div>
+P4 explicit last: <section id="study-list" class="music"><h2>Hardrock</h2>Siyah</section>
+P4 spread last: <section class="study" id="study-list"><h2>Hardrock</h2>Siyah</section>
+P5 named slots: <section><header><h3>Hardrock</h3></header><main><ol><li>Siyah</li><li>Uyan</li><li>Yine</li></ol></main><footer><small>3 tracks</small></footer></section>
+P5 children only: <section><header><h3>Hardrock</h3></header><main><ol><li>Siyah</li><li>Uyan</li><li>Yine</li></ol></main><footer><small>3 tracks</small></footer></section>
+P6 missing: <p>No listening note</p>
+P6 undefined: <p>No listening note</p>
+P6 null: <p></p>
+P6 empty string: <p></p>
+P7 ReactNode: <aside>10</aside>
+P7 PropsWithChildren: <aside><strong>Studying</strong>Hardrock</aside>
+P7 ComponentProps: <button type="button" disabled="" aria-label="Queue Siyah">Queue</button>
