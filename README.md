@@ -7,7 +7,7 @@ Student number: 2024501012
 
 This guide explores JavaScript and TypeScript destructuring through my Hardrock playlist. The examples cover positional values, named properties, defaults, rest, parameter patterns and React props and children. The personal log records my reported predictions, experiments and actual terminal results.
 
-Bonuses claimed: Bonus 1: LaTeX; Bonus 2: Depth. Bonus 4: Git repository is in progress until the multi-day history is complete. Bonus 3: Real code is deferred.
+Bonuses claimed: Bonus 1: LaTeX; Bonus 2: Depth; Bonus 3: Real code. Bonus 4: Git repository is in progress.
 
 ## My data and the example settings
 
@@ -1333,6 +1333,223 @@ npm run check
 
 The explicit negative command should fail, while the final ordinary project check should pass. The original T5 directive remains the project's only suppression.
 
+## Bonus 3: Real code
+
+### Case 1: The state and dispatch returned by useReducer
+
+**Source:** Assignment 3 starter (sample Task Manager), `src/App.tsx`, line 37, inside the `App` component.
+
+**Original code:**
+
+```tsx
+const [tasks, dispatch] = useReducer(taskReducer, [])
+```
+
+**Form:** Form 1 — taking values by position from a function's returned array.
+
+**Without destructuring:**
+
+```tsx
+const reducerResult = useReducer(taskReducer, [])
+const tasks = reducerResult[0]
+const dispatch = reducerResult[1]
+```
+
+**Explanation:**
+
+useReducer returns two values in a fixed order. The first value is the current state, which is the task list in this starter. The second value is the dispatch function used to send actions to the reducer.
+
+The array pattern assigns these values to tasks and dispatch by position. The variable names do not select the values: changing a local name would not change which position it receives.
+
+Both versions call useReducer exactly once, at the top level of the component. The version without destructuring stores the returned array first and then reads its two positions.
+
+**Readability assessment:**
+
+Destructuring makes this example easier to read because the two related results are named together. It also avoids an extra variable and repeated numeric indexes.
+
+### Case 2: Destructuring the TaskRow props
+
+**Source:** Assignment 3 starter (sample Task Manager), `src/TaskRow.tsx`, lines 5–14.
+
+**Original code:**
+
+```tsx
+export default function TaskRow({ task, onNext, onDelete }: TaskRowProps) {
+  return (
+    <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <span style={{ flex: 1 }}>{task.title}</span>
+      <em>{task.status}</em>
+      <button onClick={onNext}>Next</button>
+      <button onClick={onDelete}>Delete</button>
+    </li>
+  )
+}
+```
+
+**Form:** Form 5 combined with Form 11 — selecting named properties inside a function parameter.
+
+**Without destructuring:**
+
+```tsx
+export default function TaskRow(props: TaskRowProps) {
+  const task = props.task
+  const onNext = props.onNext
+  const onDelete = props.onDelete
+
+  return (
+    <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <span style={{ flex: 1 }}>{task.title}</span>
+      <em>{task.status}</em>
+      <button onClick={onNext}>Next</button>
+      <button onClick={onDelete}>Delete</button>
+    </li>
+  )
+}
+```
+
+**Explanation:**
+
+TaskRow receives one props object. The parameter pattern selects its task, onNext and onDelete properties. TaskRowProps describes that whole object; the annotation comes after the pattern.
+
+task is the task object. onNext and onDelete are callback props. Passing these functions does not call them immediately: the buttons use them as click handlers.
+
+**Props and children:**
+
+The starter renders TaskRow as a self-closing component in `src/App.tsx`, lines 25–30. It passes task, onNext and onDelete, without nested content. TaskRowProps does not declare children.
+
+The words Next and Delete are children of the button elements created inside TaskRow. They are not children passed into TaskRow by its caller. The key supplied in App is React's special list identifier, not an ordinary readable TaskRow prop.
+
+**Readability assessment:**
+
+The parameter pattern makes the component's three inputs visible together. This is useful because the list is short and each selected name is used directly in the JSX.
+
+### Case 3: Renaming MessageChannel ports in esbuild
+
+**Source:** Installed dependency `esbuild`, version `0.28.2`, `node_modules/esbuild/lib/main.js`, line 2394.
+
+**Original code:**
+
+```js
+let { port1: mainPort, port2: workerPort } = new worker_threads2.MessageChannel();
+```
+
+**Form:** Form 6 — renaming properties while destructuring.
+
+**Without destructuring:**
+
+```js
+let channel = new worker_threads2.MessageChannel();
+let mainPort = channel.port1;
+let workerPort = channel.port2;
+```
+
+**Explanation:**
+
+The pattern selects the properties named port1 and port2. Their values are assigned to local variables named mainPort and workerPort.
+
+The names on the left of the colons belong to the source object. The names on the right are the local bindings. This statement does not create local variables named port1 or port2.
+
+The version without destructuring creates the channel once and then reads its two properties. Calling the constructor separately for each property would create two different channels and would change the behaviour.
+
+**Readability assessment:**
+
+The renames are useful here because mainPort and workerPort describe the roles of the two endpoints more clearly than their numbered property names.
+
+### Case 4: A nested worker reply pattern that is harder to read
+
+**Source:** Installed dependency `esbuild`, version `0.28.2`, `node_modules/esbuild/lib/main.js`, line 2436, inside runCallSync.
+
+**Original code:**
+
+```js
+let { message: { id: id2, resolve, reject, properties } } = worker_threads2.receiveMessageOnPort(mainPort);
+```
+
+**Form:** Form 9 combined with Form 6 — a nested object pattern containing a rename.
+
+**Without destructuring:**
+
+```js
+let packet = worker_threads2.receiveMessageOnPort(mainPort);
+let message = packet.message;
+let id2 = message.id;
+let resolve = message.resolve;
+let reject = message.reject;
+let properties = message.properties;
+```
+
+**Explanation:**
+
+The returned packet contains a message property. The nested pattern reads id, resolve, reject and properties from that message object. The id property is renamed to id2.
+
+In the surrounding source, runCallSync already has a local variable named id for the outgoing request. The next line compares that id with id2 from the reply.
+
+The original pattern does not create a local variable named message. It uses message only as a step into the nested object. It also supplies no default: an undefined packet or a missing message object would cause the extraction to fail.
+
+**Readability assessment:**
+
+This is the case where the compact destructuring makes the code harder to read. One long statement combines a function call, two object levels, four selected fields and a rename.
+
+Separating the packet and message steps exposes the reply structure and provides useful places to inspect values while debugging. The longer version also makes it easier to see which object supplies each field. It preserves the single receiveMessageOnPort call and does not add fallback behaviour.
+
+### Case 5: Destructuring array entries in Prettier
+
+**Source:** Prettier version `3.5.3`, `src/language-js/print/jsx.js`, lines 382–388.
+
+[View the original source](https://github.com/prettier/prettier/blob/3.5.3/src/language-js/print/jsx.js#L382-L388).
+
+**Original code:**
+
+```js
+for (const [i, word] of words.entries()) {
+  if (i % 2 === 1) {
+    pushLine(line);
+  } else {
+    push(word);
+  }
+}
+```
+
+**Form:** Form 12 — destructuring pairs inside a for...of loop. This example uses Array.prototype.entries rather than Object.entries or Map.
+
+**Without destructuring:**
+
+```js
+for (const entry of words.entries()) {
+  const i = entry[0];
+  const word = entry[1];
+
+  if (i % 2 === 1) {
+    pushLine(line);
+  } else {
+    push(word);
+  }
+}
+```
+
+**Explanation:**
+
+words.entries() supplies an iterator of index/value pairs. The array pattern assigns the index to i and the corresponding value to word on each iteration.
+
+The loop uses the index's parity to choose between pushLine(line) and push(word). The version without destructuring reads the same two positions from each entry and leaves the loop body unchanged.
+
+These are array indexes, not property names obtained from for...in. This code processes JSX formatting inside Prettier; it is not a React component receiving a children prop.
+
+**Readability assessment:**
+
+Destructuring works well here because both parts of every pair are needed. Naming them in the loop header makes their relationship clearer than repeatedly reading entry[0] and entry[1].
+
+### Source and version notes
+
+Cases 1 and 2 come from the instructor's original Assignment 3 starter, rather than treating my completed assignment as somebody else's project.
+
+Cases 3 and 4 were checked in the installed esbuild dependency of the clean-clone verification copy. This project's package-lock.json records esbuild version 0.28.2. The line numbers refer to that installed version.
+
+Case 5 links to a specific Prettier release so the file and line references can be checked against the version analysed here.
+
+These five cases cover the three requested source groups: the Task Manager starter, an installed library and a separate open-source project.
+
+
 ## Bonus 4: Git repository
 
 https://github.com/mertsengel125-coder/assignment4-destructuring-field-guide
@@ -1357,7 +1574,7 @@ The real Git history began on 19 November 2026. The required multi-day history i
 - Keep the correct name/student number at the top of each source file.
 - Keep strict settings and only the single T5 suppression.
 - Zip one assignment4 folder without node_modules or .git. Upload to Moodle by its announced deadline.
-- Bonuses 1 and 2 are documented above. Bonus 3 is deferred; Bonus 4 still requires its real multi-day history. Update the bonus status only after those requirements are met.
+- Bonuses 1, 2 and 3 are documented above. Bonus 4 remains in progress until its repository and history requirements have been verified.
 
 ## My own log
 
