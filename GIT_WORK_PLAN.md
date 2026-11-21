@@ -1,36 +1,36 @@
-# Git work plan
+# Git work record
 
 Arif Mert Şengel - 2024501012
 
 Repository: https://github.com/mertsengel125-coder/assignment4-destructuring-field-guide
 
-Deadline: 22 November 2026, 23:59 Europe/Istanbul.
+Submission deadline supplied for this assignment: 22 November 2026,
+23:59 Europe/Istanbul.
 
-The repository/history started on 19 November. This plan does not claim future commits or earlier work dates.
+## 19 November 2026
 
-## 19 November - completed
+- Recorded the required guide, JavaScript and TypeScript examples and output.
+- Added seven documented depth investigations.
+- Produced and checked the initial complete LaTeX/PDF guide.
+- Verified installation and execution from a clean clone.
+- Published these steps in five separate commits.
 
-- Record the required field guide and runnable examples.
-- Add and document the depth investigations.
-- Prepare the complete LaTeX guide, compile it and inspect its PDF.
-- Publish the code and the reviewed PDF to the public repository.
-- Clone the repository into a separate directory and verify install, all,
-  strict check, depth output and LaTeX compilation. Results are in VERIFICATION.md.
+## 21 November 2026
 
-## 20 November - planned
+- Added five real-code analyses from the instructor's Task Manager starter,
+  installed esbuild library and the Prettier open-source project.
+- Published the real-code analyses in commit
+  3793cfef15b5050c167d99fd6f0f9ee271918137.
+- Regenerated the recorded outputs and matched them with README.md.
+- Verified all/check/depth from a separate clean public clone.
+- Updated the complete LaTeX guide, including Bonus 3 and the actual Git dates.
+- Adjusted section/explanation spacing and reviewed the final 31-page PDF.
+- Updated the verification records for the final submission.
 
-- Perform a meaningful new variation of one depth experiment.
-- Record its actual output and explanation, update the guide/PDF, and commit that real change.
-
-## 21 November - planned
-
-- Review the final guide/PDF, make any necessary corrections, and verify a clean clone/install/run.
-- Record the actual verification results and commit the finished source/documentation.
-
-Before claiming Bonus 4 as complete, inspect the real history for at least five meaningful commits across several days:
+The history records two actual work dates, 19 and 21 November. Earlier plans
+for 20 November were not recorded as completed work. No commits were backdated.
+Inspect the repository for the actual full history:
 
 ```sh
 git log --format='%h %ad %s' --date=short
 ```
-
-Keep commit dates real. If a planned task is not performed, do not record it as completed.

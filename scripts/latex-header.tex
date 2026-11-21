@@ -63,6 +63,7 @@
 \titleformat{\subsection}{\normalfont\large\bfseries\color{guideink}}{\thesubsection}{0.6em}{}
 \titlespacing*{\section}{0pt}{1.2em}{0.6em}
 \titlespacing*{\subsection}{0pt}{1em}{0.4em}
+\pretocmd{\section}{\Needspace{20\baselineskip}}{}{}
 \pretocmd{\subsection}{\Needspace{15\baselineskip}}{}{}
 \AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{4pt}}
 \let\guidetoc\tableofcontents

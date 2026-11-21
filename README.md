@@ -7,7 +7,7 @@ Student number: 2024501012
 
 This guide explores JavaScript and TypeScript destructuring through my Hardrock playlist. The examples cover positional values, named properties, defaults, rest, parameter patterns and React props and children. The personal log records my reported predictions, experiments and actual terminal results.
 
-Bonuses claimed: Bonus 1: LaTeX; Bonus 2: Depth; Bonus 3: Real code. Bonus 4: Git repository is in progress.
+Bonuses claimed: Bonus 1: LaTeX; Bonus 2: Depth; Bonus 3: Real code; Bonus 4: Git repository.
 
 ## My data and the example settings
 
@@ -1564,7 +1564,7 @@ npm run all
 npm run check
 ```
 
-The real Git history began on 19 November 2026. The required multi-day history is still in progress: at least five meaningful commits must span several days before this bonus is fully complete. Existing commits are not backdated. GIT_WORK_PLAN.md records the remaining work before the 22 November 2026, 23:59 Europe/Istanbul deadline. Use git log to inspect the actual current history rather than treating a plan as completed work.
+The repository history contains at least six commits, with work recorded on 19 and 21 November 2026. The commits cover the required guide, runnable examples, depth investigations, LaTeX/PDF, clean-clone verification and real-code analyses. The history spans two calendar dates. All commit dates are real. The instructor can inspect the actual history to assess the requirement for work over several days.
 
 ## Submission checks
 
@@ -1574,7 +1574,7 @@ The real Git history began on 19 November 2026. The required multi-day history i
 - Keep the correct name/student number at the top of each source file.
 - Keep strict settings and only the single T5 suppression.
 - Zip one assignment4 folder without node_modules or .git. Upload to Moodle by its announced deadline.
-- Bonuses 1, 2 and 3 are documented above. Bonus 4 remains in progress until its repository and history requirements have been verified.
+- Bonuses 1, 2, 3 and 4 are claimed above. Check the actual repository history and ensure the final code, recorded outputs, Markdown guide and LaTeX/PDF agree.
 
 ## My own log
 

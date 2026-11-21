@@ -22,7 +22,7 @@ end
 function Para(value)
   local first = value.content[1]
   local label = first and first.t == 'Strong' and pandoc.utils.stringify(first) or ''
-  if label:match('^Example') or label:match('^Output') or label:match('^Real') or label:match('^Without destructuring') then
+  if label:match('^Example') or label:match('^Output') or label:match('^Real') or label:match('^Without destructuring') or label:match('^Explanation') then
     return {pandoc.RawBlock('latex', '\\Needspace{9\\baselineskip}'), value}
   end
 end
